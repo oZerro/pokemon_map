@@ -4,7 +4,11 @@ from django.db import models  # noqa F401
 
 
 class Pokemon(models.Model):
-    title = models.CharField(max_length=200, verbose_name="Название на русском")
+    title = models.CharField(
+        max_length=200, 
+        verbose_name="Название на русском",
+        null=True,
+        blank=False)
     title_en = models.CharField(
         max_length=200, 
         null=True, 
@@ -46,7 +50,7 @@ class PokemonEntity(models.Model):
         Pokemon, 
         on_delete=models.CASCADE, 
         null=True, 
-        blank=True,
+        blank=False,
         verbose_name="Покемон")
     lat = models.FloatField(verbose_name="Широта")
     len = models.FloatField(verbose_name="Долгота")
