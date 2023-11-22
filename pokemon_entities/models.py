@@ -1,29 +1,22 @@
 from django.db import models  
 
 
+
 class Pokemon(models.Model):
     title = models.CharField(
         max_length=200, 
         verbose_name="Название на русском",
-        null=True,
-        blank=False)
+        default="ПОкемон")
     title_en = models.CharField(
         max_length=200, 
-        null=True, 
         blank=True, 
-        verbose_name="Название на Англиском")
+        verbose_name="Название на Англиском",
+        default="")
     title_jp = models.CharField(
         max_length=200, 
-        null=True, 
         blank=True,
-        verbose_name="Название на Японском")
-    next_evolution = models.ForeignKey(
-        "Pokemon",
-        on_delete=models.SET_NULL, 
-        related_name='next_evol',
-        null=True, 
-        blank=True,
-        verbose_name="В кого эволюционирует")
+        verbose_name="Название на Японском",
+        default="")
     previous_evolution = models.ForeignKey(
         "Pokemon", 
         on_delete=models.SET_NULL, 
@@ -31,7 +24,7 @@ class Pokemon(models.Model):
         null=True,
         blank=True,
         verbose_name="Из кого иволюционировал")
-    description = models.TextField(null=True, blank=True, verbose_name="Описание")
+    description = models.TextField(blank=True, verbose_name="Описание", default="ПОкемон")
     image = models.ImageField(
         upload_to='pokemons_img', 
         null=True, 
@@ -47,20 +40,17 @@ class PokemonEntity(models.Model):
     pokemon = models.ForeignKey(
         Pokemon, 
         on_delete=models.CASCADE, 
+        related_name='entity',
         null=True, 
         blank=False,
         verbose_name="Покемон")
     lat = models.FloatField(verbose_name="Широта")
     len = models.FloatField(verbose_name="Долгота")
     appeared_at = models.DateTimeField(
-        auto_now=False, 
-        auto_now_add=False, 
         null=True, 
         blank=True,
         verbose_name="Дата появления")
     disappered_at = models.DateTimeField(
-        auto_now=False, 
-        auto_now_add=False, 
         null=True, 
         blank=True,
         verbose_name="Дата исчезновения")
