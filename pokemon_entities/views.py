@@ -33,19 +33,24 @@ def show_all_pokemons(request):
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
     
     for pokemon_entity in pokemon_entities:
+        image_path = f'media/{pokemon_entity.pokemon.image}'
+        absolute_uri_image = request.build_absolute_uri(image_path)
+
         add_pokemon(
             folium_map, pokemon_entity.lat,
             pokemon_entity.len,
-            request.build_absolute_uri() 
+            absolute_uri_image
         )
     
     pokemons = Pokemon.objects.all()
 
     pokemons_on_page = []
     for pokemon in pokemons:
+        image_path = f'media/{pokemon.image}'
+        absolute_uri_image = request.build_absolute_uri(image_path)
         pokemons_on_page.append({
             'pokemon_id': pokemon.id,
-            'img_url': f'media/{pokemon.image}',
+            'img_url': absolute_uri_image,
             'title_ru': pokemon.title,
         })
 
@@ -60,18 +65,23 @@ def show_pokemon(request, pokemon_id):
     pokemon = get_object_or_404(Pokemon, id=int(pokemon_id))
 
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
-    pokemon_entitys = PokemonEntity.objects.filter(pokemon=pokemon)
+    pokemon_entities = PokemonEntity.objects.filter(pokemon=pokemon)
     pokemon_evolution = ""
-    if pokemon.previous_evol.all():
-        pokemon_evolution = pokemon.previous_evol.all()[0]
+     
 
-    for pokemon_entity in pokemon_entitys:
+    if pokemon.next_evolutions.all():
+        pokemon_evolution = pokemon.next_evolutions.first()
+
+    for pokemon_entity in pokemon_entities:
+        image_path = f'media/{pokemon_entity.pokemon.image}'
+        absolute_uri_image = request.build_absolute_uri(image_path)
         add_pokemon(
             folium_map, pokemon_entity.lat,
             pokemon_entity.len,
-            f'media/{pokemon_entity.pokemon.image}'
+            absolute_uri_image
+            
         )
 
     return render(request, 'pokemon.html', context={
-        'map': folium_map._repr_html_(), 'pokemon': pokemon, 'pokemon_evol': pokemon_evolution
+        'map': folium_map._repr_html_(), 'pokemon': pokemon, 'next_evolutions': pokemon_evolution
     })
