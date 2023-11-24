@@ -6,6 +6,7 @@ from django.http import HttpResponseNotFound
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from .models import Pokemon, PokemonEntity
+from pogomap.settings import MEDIA_URL
 
 MOSCOW_CENTER = [55.751244, 37.618423]
 DEFAULT_IMAGE_URL = (
@@ -33,7 +34,7 @@ def show_all_pokemons(request):
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
     
     for pokemon_entity in pokemon_entities:
-        image_path = f'media/{pokemon_entity.pokemon.image}'
+        image_path = f'{MEDIA_URL}{pokemon_entity.pokemon.image}'
         absolute_uri_image = request.build_absolute_uri(image_path)
 
         add_pokemon(
@@ -46,7 +47,7 @@ def show_all_pokemons(request):
 
     pokemons_on_page = []
     for pokemon in pokemons:
-        image_path = f'media/{pokemon.image}'
+        image_path = f'{MEDIA_URL}{pokemon.image}'
         absolute_uri_image = request.build_absolute_uri(image_path)
         pokemons_on_page.append({
             'pokemon_id': pokemon.id,
@@ -66,14 +67,11 @@ def show_pokemon(request, pokemon_id):
 
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
     pokemon_entities = PokemonEntity.objects.filter(pokemon=pokemon)
-    pokemon_evolution = ""
-     
-
-    if pokemon.next_evolutions.all():
-        pokemon_evolution = pokemon.next_evolutions.first()
+    
+    pokemon_evolution = pokemon.next_evolutions.first()
 
     for pokemon_entity in pokemon_entities:
-        image_path = f'media/{pokemon_entity.pokemon.image}'
+        image_path = f'{MEDIA_URL}{pokemon_entity.pokemon.image}'
         absolute_uri_image = request.build_absolute_uri(image_path)
         add_pokemon(
             folium_map, pokemon_entity.lat,
